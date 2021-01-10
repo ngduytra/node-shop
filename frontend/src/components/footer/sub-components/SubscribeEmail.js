@@ -29,7 +29,7 @@ const CustomForm = ({ status, message, onValidated }) => {
         </div>
         <div className="clear">
           <button className="button" onClick={submit}>
-            SUBSCRIBE
+            Đăng Ký
           </button>
         </div>
       </div>

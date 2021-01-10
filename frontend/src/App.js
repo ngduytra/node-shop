@@ -101,6 +101,8 @@ const About = lazy(() => import("./pages/other/About"));
 const Contact = lazy(() => import("./pages/other/Contact"));
 const MyAccount = lazy(() => import("./pages/other/MyAccount"));
 const LoginRegister = lazy(() => import("./pages/other/LoginRegister"));
+const Order = lazy(() => import("./pages/other/OrderScreen"));
+const ProfileScreen = lazy(() => import("./pages/other/Profile"));
 
 const Cart = lazy(() => import("./pages/other/Cart"));
 const Wishlist = lazy(() => import("./pages/other/Wishlist"));
@@ -116,7 +118,8 @@ const App = (props) => {
         languages: {
           en: require("./translations/english.json"),
           fn: require("./translations/french.json"),
-          de: require("./translations/germany.json")
+          de: require("./translations/germany.json"),
+          vi: require("./translations/vietnam.json")
         }
       })
     );
@@ -416,6 +419,11 @@ const App = (props) => {
                   path={process.env.PUBLIC_URL + "/checkout"}
                   component={Checkout}
                 />
+                <Route
+                  path={process.env.PUBLIC_URL + "/order/:id"}
+                  component={Order}
+                />
+                <Route path= {process.env.PUBLIC_URL + '/profile'} component={ProfileScreen}/>
 
                 <Route
                   path={process.env.PUBLIC_URL + "/not-found"}

@@ -42,14 +42,14 @@ const registerUser = asyncHandler(async(req, res)=>{
     }
 
     const user = await User.create({
-        name,
+        username: name,
         email,
         password
     })
     if(user){
         res.status(201).json({
             _id: user._id,
-            name: user.name,
+            name: user.username,
             email: user.email,
             isAdmin: user.isAdmin,
             token: generateToken(user._id)

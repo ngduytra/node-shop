@@ -18,9 +18,9 @@ const Contact = ({ location }) => {
           content="Contact of flone react minimalist eCommerce template."
         />
       </MetaTags>
-      <BreadcrumbsItem to={process.env.PUBLIC_URL + "/"}>Home</BreadcrumbsItem>
+      <BreadcrumbsItem to={process.env.PUBLIC_URL + "/"}>Trang Chủ</BreadcrumbsItem>
       <BreadcrumbsItem to={process.env.PUBLIC_URL + pathname}>
-        Contact
+        Liên Hệ
       </BreadcrumbsItem>
       <LayoutOne headerTop="visible">
         {/* breadcrumb */}
@@ -48,10 +48,10 @@ const Contact = ({ location }) => {
                     </div>
                     <div className="contact-info-dec">
                       <p>
-                        <a href="mailto:urname@email.com">urname@email.com</a>
+                        <a href="mailto:ngduytra@email.com">ngduytra@email.com</a>
                       </p>
                       <p>
-                        <a href="//urwebsitenaem.com">urwebsitenaem.com</a>
+                        <a href="/haravy.com">haravy.com</a>
                       </p>
                     </div>
                   </div>
@@ -60,12 +60,12 @@ const Contact = ({ location }) => {
                       <i className="fa fa-map-marker" />
                     </div>
                     <div className="contact-info-dec">
-                      <p>Address goes here, </p>
-                      <p>street, Crossroad 123.</p>
+                      <p>32 Ho Tung Mau, </p>
+                      <p>Q.1, Tp HCM.</p>
                     </div>
                   </div>
                   <div className="contact-social text-center">
-                    <h3>Follow Us</h3>
+                    <h3>Theo Dõi Chúng Tôi</h3>
                     <ul>
                       <li>
                         <a href="//facebook.com">
@@ -99,7 +99,7 @@ const Contact = ({ location }) => {
               <div className="col-lg-8 col-md-7">
                 <div className="contact-form">
                   <div className="contact-title mb-30">
-                    <h2>Get In Touch</h2>
+                    <h2>Liên Hệ Ngay</h2>
                   </div>
                   <form className="contact-form-style">
                     <div className="row">
@@ -123,7 +123,7 @@ const Contact = ({ location }) => {
                           defaultValue={""}
                         />
                         <button className="submit" type="submit">
-                          SEND
+                          Gửi
                         </button>
                       </div>
                     </div>

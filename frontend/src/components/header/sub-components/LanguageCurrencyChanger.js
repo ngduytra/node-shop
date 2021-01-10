@@ -28,7 +28,9 @@ const LanguageCurrencyChanger = ({
             ? "French"
             : currentLanguageCode === "de"
             ? "Germany"
-            : ""}{" "}
+            : currentLanguageCode === "vi"
+            ? "VietNam"
+            :""}{" "}
           <i className="fa fa-angle-down" />
         </span>
         <div className="lang-car-dropdown">
@@ -46,6 +48,11 @@ const LanguageCurrencyChanger = ({
             <li>
               <button value="de" onClick={e => changeLanguageTrigger(e)}>
                 Germany
+              </button>
+            </li>
+            <li>
+              <button value="vi" onClick={e => changeLanguageTrigger(e)}>
+                Viet Nam
               </button>
             </li>
           </ul>
@@ -72,11 +79,16 @@ const LanguageCurrencyChanger = ({
                 GBP
               </button>
             </li>
+            <li>
+              <button value="VND" onClick={e => setCurrencyTrigger(e)}>
+                VND
+              </button>
+            </li>
           </ul>
         </div>
       </div>
       <div className="same-language-currency">
-        <p>Call Us 3965410</p>
+        <p>Gọi chúng tôi 0337597788</p>
       </div>
     </div>
   );

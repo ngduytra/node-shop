@@ -10,16 +10,28 @@ import Message from '../../components/Message'
 import Loader from '../../components/Loader'
 import LayoutOne from "../../layouts/LayoutOne";
 import Breadcrumb from "../../wrappers/breadcrumb/Breadcrumb";
-import {login} from '../../redux/actions/userActions'
+import {login, register} from '../../redux/actions/userActions'
 
 const LoginRegister = ({ location, history }) => {
+  // State for login
   const { pathname } = location;
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  //State for register
+  const [emailR, setEmailR] = useState('')
+  const [passwordR, setPasswordR] = useState('')
+  const [nameR, setNameR] = useState('')
+  const [confirmPasswordR, setConfirmPasswordR] = useState('')
+  const [messageR, setMessageR] = useState(null)
+
   const dispatch = useDispatch()
 
   const userLogin = useSelector(state=> state.userLogin)
   const {loading, error, userInfo} = userLogin
+
+  const userRegister = useSelector(state=> state.userRegister)
+  const {loading : loadingR, error: errorR, userInfo: userReg} = userRegister
 
   const redirect = location.search ? location.search.split('=')[1] : '/'
 
@@ -27,12 +39,20 @@ const LoginRegister = ({ location, history }) => {
     if(userInfo){
       history.push(redirect)
     }
-  },[history, userInfo, redirect])
+  },[history, userInfo, redirect, userReg])
   
   const submitHandler = (e)=>{
     e.preventDefault()
     dispatch(login(email, password))
   }
+
+  const submitHandlerReg = (e)=>{
+    e.preventDefault()
+    if(passwordR !== confirmPasswordR){
+        setMessageR('Password do not match')
+    }
+    dispatch(register(nameR,emailR, passwordR))
+}
 
   return (
     <Fragment>
@@ -105,28 +125,45 @@ const LoginRegister = ({ location, history }) => {
                           </div>
                         </div>
                       </Tab.Pane>
+                      {errorR && <Message variant='danger'>{messageR}</Message>}
+                      {errorR && <Message variant='danger'>{errorR}</Message>}
+                      {userReg && <Message variant='primary'>{'Đăng ký thành công'}</Message>}
+                      {loadingR && <Loader/>}
                       <Tab.Pane eventKey="register">
                         <div className="login-form-container">
                           <div className="login-register-form">
-                            <form>
+                            <form onSubmit={submitHandlerReg}>
                               <input
                                 type="text"
                                 name="user-name"
-                                placeholder="Username"
+                                placeholder="Tên của bạn"
+                                value={nameR}
+                                onChange={e=>setNameR(e.target.value)}
                               />
                               <input
                                 type="password"
                                 name="user-password"
-                                placeholder="Password"
+                                placeholder="Mật khẩu"
+                                value={passwordR}
+                                onChange={e=>setPasswordR(e.target.value)}
+                              />
+                              <input
+                                type="password"
+                                name="user-confirmpassword"
+                                placeholder="Nhập lại mật khẩu"
+                                value={confirmPasswordR}
+                                onChange={e=>setConfirmPasswordR(e.target.value)}
                               />
                               <input
                                 name="user-email"
                                 placeholder="Email"
                                 type="email"
+                                value={emailR}
+                                onChange={e=>setEmailR(e.target.value)}
                               />
                               <div className="button-box">
                                 <button type="submit">
-                                  <span>Register</span>
+                                  <span>Đăng ký</span>
                                 </button>
                               </div>
                             </form>

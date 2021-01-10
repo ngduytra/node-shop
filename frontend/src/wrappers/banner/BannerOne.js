@@ -1,10 +1,24 @@
 import PropTypes from "prop-types";
-import React from "react";
-import bannerData from "../../data/banner/banner-one.json";
+import React, {useEffect} from "react";
+import {useDispatch, useSelector} from 'react-redux'
 import BannerOneSingle from "../../components/banner/BannerOneSingle.js";
+import {getBannerOnes} from "../../redux/actions/sliderActions.js"
 
 const BannerOne = ({ spaceTopClass, spaceBottomClass }) => {
+  const dispatch = useDispatch()
+  const getBannerOne = useSelector(state=>state.getBannerOne)
+  const {loading, error, bannerOneInfo} = getBannerOne
+  console.log(bannerOneInfo);
+
+  useEffect(() => {
+    dispatch(getBannerOnes())
+  }, [dispatch])
+
   return (
+  loading ? (<h1>Loading</h1>)
+  : error ?
+  <h2>{error}</h2>
+  :(
     <div
       className={`banner-area ${spaceTopClass ? spaceTopClass : ""} ${
         spaceBottomClass ? spaceBottomClass : ""
@@ -12,8 +26,8 @@ const BannerOne = ({ spaceTopClass, spaceBottomClass }) => {
     >
       <div className="container">
         <div className="row">
-          {bannerData &&
-            bannerData.map((single, key) => {
+          {bannerOneInfo &&
+            bannerOneInfo.map((single, key) => {
               return (
                 <BannerOneSingle
                   data={single}
@@ -25,8 +39,8 @@ const BannerOne = ({ spaceTopClass, spaceBottomClass }) => {
         </div>
       </div>
     </div>
-  );
-};
+  ))
+}
 
 BannerOne.propTypes = {
   spaceBottomClass: PropTypes.string,

@@ -1,4 +1,4 @@
-[
+const banner = [
   {
     "id": 1,
     "image": "/assets/img/banner/banner-1.jpg",
@@ -24,3 +24,5 @@
     "link": "/shop-grid-standard"
   }
 ]
+
+export default banner

@@ -1,0 +1,3 @@
+export const GET_TEXT_REQUEST = 'GET_TEXT_REQUEST'
+export const GET_TEXT_SUCCESS = 'GET_TEXT_SUCCESS'
+export const GET_TEXT_FAIL = 'GET_TEXT_FAIL'

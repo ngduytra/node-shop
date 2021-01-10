@@ -3,7 +3,8 @@ import {
   ADD_TO_CART,
   DECREASE_QUANTITY,
   DELETE_FROM_CART,
-  DELETE_ALL_FROM_CART
+  DELETE_ALL_FROM_CART,
+  CART_SAVE_SHIPPING_ADDRESS
 } from "../actions/cartActions";
 
 const initState = [];
@@ -119,4 +120,15 @@ const cartReducer = (state = initState, action) => {
   return state;
 };
 
-export default cartReducer;
+const addAddressReducer = (state={shippingAdrress:{}}, action)=>{
+  if(action.type === CART_SAVE_SHIPPING_ADDRESS){
+    return {
+        ...state,
+        shippingAdrress: action.payload
+    }
+  }
+
+  return state;
+}
+
+export {cartReducer,addAddressReducer}

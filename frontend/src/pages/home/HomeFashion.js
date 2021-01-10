@@ -7,6 +7,7 @@ import TabProduct from "../../wrappers/product/TabProduct";
 import BlogFeatured from "../../wrappers/blog-featured/BlogFeatured";
 
 const HomeFashion = () => {
+  
   return (
     <Fragment>
       <MetaTags>
@@ -19,6 +20,7 @@ const HomeFashion = () => {
       <LayoutOne
         headerContainerClass="container-fluid"
         headerPaddingClass="header-padding-1"
+        headerTop="visible"
       >
         {/* hero slider */}
         <HeroSliderOne />

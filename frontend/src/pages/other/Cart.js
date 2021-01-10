@@ -19,12 +19,27 @@ import Breadcrumb from "../../wrappers/breadcrumb/Breadcrumb";
 const Cart = ({
   location,
   cartItems,
+  addressOrder,
   currency,
   decreaseQuantity,
   addToCart,
   deleteFromCart,
   deleteAllFromCart
 }) => {
+  const {shippingAdrress} = addressOrder
+
+  const addDecimals = (num)=>{
+    return (Math.round(num * 100)/100).toFixed(2)
+  }
+
+  const productPrice = addDecimals(cartItems.reduce(
+    (acc, item)=> acc + item.price * item.quantity,0
+  ))
+
+  const shippingPrice = addDecimals(productPrice > 100 ? 0 : 100)
+  const taxPrice = addDecimals(Number((0.15 * productPrice).toFixed(2)))
+  const totalPrice = (Number(productPrice) + Number(shippingPrice) + Number(taxPrice)).toFixed(2)
+
   const [quantityCount] = useState(1);
   const { addToast } = useToasts();
   const { pathname } = location;
@@ -33,16 +48,16 @@ const Cart = ({
   return (
     <Fragment>
       <MetaTags>
-        <title>Flone | Cart</title>
+        <title>Haravy.com | Cart</title>
         <meta
           name="description"
-          content="Cart page of flone react minimalist eCommerce template."
+          content="Haravy.com | Cart"
         />
       </MetaTags>
 
-      <BreadcrumbsItem to={process.env.PUBLIC_URL + "/"}>Home</BreadcrumbsItem>
+      <BreadcrumbsItem to={process.env.PUBLIC_URL + "/"}>Trang Chủ</BreadcrumbsItem>
       <BreadcrumbsItem to={process.env.PUBLIC_URL + pathname}>
-        Cart
+        Giỏ Hàng
       </BreadcrumbsItem>
 
       <LayoutOne headerTop="visible">
@@ -52,19 +67,19 @@ const Cart = ({
           <div className="container">
             {cartItems && cartItems.length >= 1 ? (
               <Fragment>
-                <h3 className="cart-page-title">Your cart items</h3>
+                <h3 className="cart-page-title">Giỏ hàng của bạn</h3>
                 <div className="row">
                   <div className="col-12">
                     <div className="table-content table-responsive cart-table-content">
                       <table>
                         <thead>
                           <tr>
-                            <th>Image</th>
-                            <th>Product Name</th>
-                            <th>Unit Price</th>
-                            <th>Qty</th>
-                            <th>Subtotal</th>
-                            <th>action</th>
+                            <th>Ảnh</th>
+                            <th>Tên Sản Phẩm</th>
+                            <th>Đơn Vị Giá</th>
+                            <th>Số Lượng</th>
+                            <th>Tổng giá</th>
+                            <th>Hành Động</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -227,12 +242,12 @@ const Cart = ({
                         <Link
                           to={process.env.PUBLIC_URL + "/shop-grid-standard"}
                         >
-                          Continue Shopping
+                          Tiếp Tục Mua Sắm
                         </Link>
                       </div>
                       <div className="cart-clear">
                         <button onClick={() => deleteAllFromCart(addToast)}>
-                          Clear Shopping Cart
+                          Xoá Tất Cả Các Items
                         </button>
                       </div>
                     </div>
@@ -244,12 +259,12 @@ const Cart = ({
                     <div className="cart-tax">
                       <div className="title-wrap">
                         <h4 className="cart-bottom-title section-bg-gray">
-                          Estimate Shipping And Tax
+                          Phí và Thuế
                         </h4>
                       </div>
                       <div className="tax-wrapper">
                         <p>
-                          Enter your destination to get a shipping estimate.
+                          Nhập địa điểm giao hàng
                         </p>
                         <div className="tax-select-wrapper">
                           <div className="tax-select">
@@ -307,24 +322,24 @@ const Cart = ({
                     <div className="grand-totall">
                       <div className="title-wrap">
                         <h4 className="cart-bottom-title section-bg-gary-cart">
-                          Cart Total
+                          Tổng Cộng Giỏ Hàng
                         </h4>
                       </div>
                       <h5>
-                        Total products{" "}
+                        Tổng Giá Sản Phẩm{" "}
                         <span>
-                          {currency.currencySymbol + cartTotalPrice.toFixed(2)}
+                          {currency.currencySymbol} {" "}  {productPrice}
                         </span>
                       </h5>
 
                       <h4 className="grand-totall-title">
-                        Grand Total{" "}
+                        Tổng Cộng{" "}
                         <span>
-                          {currency.currencySymbol + cartTotalPrice.toFixed(2)}
+                          {currency.currencySymbol}{" "}{totalPrice}
                         </span>
                       </h4>
                       <Link to={process.env.PUBLIC_URL + "/checkout"}>
-                        Proceed to Checkout
+                        Tiến Hành Thanh Toán
                       </Link>
                     </div>
                   </div>
@@ -338,9 +353,9 @@ const Cart = ({
                       <i className="pe-7s-cart"></i>
                     </div>
                     <div className="item-empty-area__text">
-                      No items found in cart <br />{" "}
+                      Không có món hàng nào! <br />{" "}
                       <Link to={process.env.PUBLIC_URL + "/shop-grid-standard"}>
-                        Shop Now
+                        Mua Tiếp
                       </Link>
                     </div>
                   </div>
@@ -367,7 +382,8 @@ Cart.propTypes = {
 const mapStateToProps = state => {
   return {
     cartItems: state.cartData,
-    currency: state.currencyData
+    currency: state.currencyData,
+    addressOrder: state.addressOrder
   };
 };
 

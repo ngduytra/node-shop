@@ -1,122 +1,196 @@
 import PropTypes from "prop-types";
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import MetaTags from "react-meta-tags";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { getDiscountPrice } from "../../helpers/product";
 import LayoutOne from "../../layouts/LayoutOne";
 import Breadcrumb from "../../wrappers/breadcrumb/Breadcrumb";
+import {createOrder} from '../../redux/actions/orderActions'
+import {saveShippingAddress} from '../../redux/actions/cartActions'
 
-const Checkout = ({ location, cartItems, currency }) => {
+const Checkout = ({ location, addressOrder,userLogin, cartItems, currency , orderCreate, history}) => {
   const { pathname } = location;
+  const dispatch = useDispatch()
   let cartTotalPrice = 0;
+  const {shippingAdrress} = addressOrder
+  const {userInfo} = userLogin
+  const {order, success, error} = orderCreate
+
+
+  const [name, setName] = useState(userInfo ? userInfo.name : '')
+  const [address, setAddress] = useState(shippingAdrress.address)
+  const [city, setCity] = useState(shippingAdrress.city)
+  const [postalCode, setPostalCode] = useState(shippingAdrress.postalCode)
+  const [country, setCountry] = useState(shippingAdrress.country)
+  const [message, setMessage] = useState('')
+
+  const addDecimals = (num)=>{
+    return (Math.round(num * 100)/100).toFixed(2)
+  }
+  useEffect(() => {
+    if(!userInfo) {
+      history.push('/login-register?redirect=checkout')
+    }
+    if(success){
+      setMessage('Đã đặt hàng thành công!')
+    }
+}, [ userInfo,success, order])
+
+  const productPrice = addDecimals(cartItems.reduce(
+    (acc, item)=> acc + item.price * item.quantity,0
+  ))
+
+  const shippingPrice = addDecimals(productPrice > 100 ? 0 : 100)
+  const taxPrice = addDecimals(Number((0.15 * productPrice).toFixed(2)))
+  const totalPrice = (Number(productPrice) + Number(shippingPrice) + Number(taxPrice)).toFixed(2)
+
+//   useEffect(() => {
+//     if(success){
+//         history.push(`/order/${order._id}`)
+//     }
+// }, [history, success, order])
+
+  const handlerOrder = ()=>{
+    dispatch(createOrder({
+      orderItems: cartItems,
+      shippingAddress: {
+        address: address,
+        city: city,
+        postalCode:postalCode,
+        country:country
+      },
+      // paymentMethod: cart.paymentMethod,
+      itemsPrice: productPrice,
+      shippingPrice: shippingPrice,
+      taxPrice: taxPrice,
+      totalPrice: totalPrice
+    }))
+    dispatch(saveShippingAddress)
+  }
 
   return (
     <Fragment>
       <MetaTags>
-        <title>Flone | Checkout</title>
+        <title>Haravy.com | Checkout</title>
         <meta
           name="description"
-          content="Checkout page of flone react minimalist eCommerce template."
+          content="Haravy.com | Checkout"
         />
       </MetaTags>
-      <BreadcrumbsItem to={process.env.PUBLIC_URL + "/"}>Home</BreadcrumbsItem>
+      <BreadcrumbsItem to={process.env.PUBLIC_URL + "/"}>Trang Chủ</BreadcrumbsItem>
       <BreadcrumbsItem to={process.env.PUBLIC_URL + pathname}>
-        Checkout
+        Thanh Toán
       </BreadcrumbsItem>
       <LayoutOne headerTop="visible">
         {/* breadcrumb */}
         <Breadcrumb />
+        {message && <h1>{message}</h1>}
+        {error && <h1>{error}</h1>}
         <div className="checkout-area pt-95 pb-100">
           <div className="container">
             {cartItems && cartItems.length >= 1 ? (
               <div className="row">
                 <div className="col-lg-7">
                   <div className="billing-info-wrap">
-                    <h3>Billing Details</h3>
+                    <h3>Chi Tiết Hoá Đơn</h3>
                     <div className="row">
-                      <div className="col-lg-6 col-md-6">
+                      <div className="col-lg-12 col-md-12">
                         <div className="billing-info mb-20">
-                          <label>First Name</label>
-                          <input type="text" />
-                        </div>
-                      </div>
-                      <div className="col-lg-6 col-md-6">
-                        <div className="billing-info mb-20">
-                          <label>Last Name</label>
-                          <input type="text" />
+                          <label>Họ Tên</label>
+                          <input 
+                          type="text"
+                          placeholder='Enter address'
+                          value={name}
+                          required
+                          onChange={e=>setName(e.target.value)}
+                          />
                         </div>
                       </div>
                       <div className="col-lg-12">
                         <div className="billing-info mb-20">
-                          <label>Company Name</label>
+                          <label>Tên Công Ty</label>
                           <input type="text" />
                         </div>
                       </div>
                       <div className="col-lg-12">
                         <div className="billing-select mb-20">
-                          <label>Country</label>
-                          <select>
-                            <option>Select a country</option>
-                            <option>Azerbaijan</option>
-                            <option>Bahamas</option>
-                            <option>Bahrain</option>
-                            <option>Bangladesh</option>
-                            <option>Barbados</option>
-                          </select>
+                          <label>Quốc Gia</label>
+                          <input 
+                          type='text'
+                          placeholder='Nhập quốc gia'
+                          value={country}
+                          required
+                          onChange={e=>setCountry(e.target.value)}
+                          />
                         </div>
                       </div>
                       <div className="col-lg-12">
                         <div className="billing-info mb-20">
-                          <label>Street Address</label>
+                          <label>Tên Đường, Số nhà</label>
                           <input
                             className="billing-address"
-                            placeholder="House number and street name"
+                            placeholder="Tên đường ..."
                             type="text"
+                            value={address}
+                            required
+                            onChange={e=>setAddress(e.target.value)}
                           />
                           <input
-                            placeholder="Apartment, suite, unit etc."
+                            placeholder="So nha, duong.. etc."
                             type="text"
                           />
                         </div>
                       </div>
                       <div className="col-lg-12">
                         <div className="billing-info mb-20">
-                          <label>Town / City</label>
-                          <input type="text" />
+                          <label>Thij Tran / Thanh Pho</label>
+                          <input 
+                          type="text"
+                          placeholder='Nhập quốc gia'
+                          value={city}
+                          required
+                          onChange={e=>setCity(e.target.value)}
+                           />
                         </div>
                       </div>
-                      <div className="col-lg-6 col-md-6">
+                      {/* <div className="col-lg-6 col-md-6">
                         <div className="billing-info mb-20">
-                          <label>State / County</label>
+                          <label> / County</label>
                           <input type="text" />
                         </div>
-                      </div>
+                      </div> */}
                       <div className="col-lg-6 col-md-6">
                         <div className="billing-info mb-20">
                           <label>Postcode / ZIP</label>
+                          <input 
+                          type="text"
+                          placeholder='Ma Buu Dien'
+                          value={postalCode}
+                          required
+                          onChange={e=>setPostalCode(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-lg-6 col-md-6">
+                        <div className="billing-info mb-20">
+                          <label>Số điện thoại</label>
                           <input type="text" />
                         </div>
                       </div>
                       <div className="col-lg-6 col-md-6">
                         <div className="billing-info mb-20">
-                          <label>Phone</label>
-                          <input type="text" />
-                        </div>
-                      </div>
-                      <div className="col-lg-6 col-md-6">
-                        <div className="billing-info mb-20">
-                          <label>Email Address</label>
+                          <label>Địa chỉ email</label>
                           <input type="text" />
                         </div>
                       </div>
                     </div>
 
                     <div className="additional-info-wrap">
-                      <h4>Additional information</h4>
+                      <h4>Thông tin thêm</h4>
                       <div className="additional-info">
-                        <label>Order notes</label>
+                        <label>Lưu ý về đơn hàng</label>
                         <textarea
                           placeholder="Notes about your order, e.g. special notes for delivery. "
                           name="message"
@@ -134,8 +208,8 @@ const Checkout = ({ location, cartItems, currency }) => {
                       <div className="your-order-product-info">
                         <div className="your-order-top">
                           <ul>
-                            <li>Product</li>
-                            <li>Total</li>
+                            <li>Sản Phẩm</li>
+                            <li>Tổng Cộng</li>
                           </ul>
                         </div>
                         <div className="your-order-middle">
@@ -198,7 +272,7 @@ const Checkout = ({ location, cartItems, currency }) => {
                       <div className="payment-method"></div>
                     </div>
                     <div className="place-order mt-25">
-                      <button className="btn-hover">Place Order</button>
+                      <button className="btn-hover" onClick={handlerOrder}>Đặt Hàng</button>
                     </div>
                   </div>
                 </div>
@@ -211,9 +285,9 @@ const Checkout = ({ location, cartItems, currency }) => {
                       <i className="pe-7s-cash"></i>
                     </div>
                     <div className="item-empty-area__text">
-                      No items found in cart to checkout <br />{" "}
+                      Không có mặt hàng nào được tìm thấy <br />{" "}
                       <Link to={process.env.PUBLIC_URL + "/shop-grid-standard"}>
-                        Shop Now
+                        Mua Ngay
                       </Link>
                     </div>
                   </div>
@@ -236,7 +310,10 @@ Checkout.propTypes = {
 const mapStateToProps = state => {
   return {
     cartItems: state.cartData,
-    currency: state.currencyData
+    currency: state.currencyData,
+    addressOrder: state.addressOrder,
+    userLogin: state.userLogin,
+    orderCreate: state.orderCreate
   };
 };
 
